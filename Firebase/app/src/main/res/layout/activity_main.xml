@@ -16,6 +16,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             >
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -57,7 +58,9 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"
-        android:background = "#BDE4FF"
+        android:background="#8698D9"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
 
         app:menu="@menu/bottom_nav_main"></com.google.android.material.bottomnavigation.BottomNavigationView>
 

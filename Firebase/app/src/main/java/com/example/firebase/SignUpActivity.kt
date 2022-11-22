@@ -40,8 +40,8 @@ class SignUpActivity : AppCompatActivity() {
 
             doSignUp(email, password)//아이디 생성 후, 개인정보를 firestore // 비밀번호 확인 기능추가 // 중복체크 추가
 
-                usersCollectionRef.document(email)//이메일로 구분
-                    .set(usersMap)
+            usersCollectionRef.document(email)//이메일로 구분
+                .set(usersMap)
 
         }
 

@@ -27,7 +27,7 @@ class MenuFragment:Fragment(R.layout.fragment_menu) {
             startActivity(//로그아웃 후 로그인 액티비티로 이동
                 intent
             )
-            //finish()//메인액티비티 종료
+            //getActivity()?.finish()//메인액티비티 종료
         }
 
         //findNavController()

@@ -1,10 +1,15 @@
 package com.example.firebase
 
+import android.Manifest
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.firebase.databinding.ActivityMainBinding
 import com.example.firebase.navigation.*
@@ -15,9 +20,11 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 
 class MainActivity : AppCompatActivity(){
-
+    lateinit var storage: FirebaseStorage
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -29,6 +36,8 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        storage = Firebase.storage
+
         if (Firebase.auth.currentUser == null) {//로그인 안된 상태
             startActivity(
                 Intent(this, LoginActivity::class.java)
@@ -37,7 +46,7 @@ class MainActivity : AppCompatActivity(){
         }
 
         val userEmail = Firebase.auth.currentUser?.email ?: "No user" // 현재 유저의 이메일 //getEmail()
-
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
         setupBottomNavigationonView()
 
         //binding.mainEmail.text = userEmail
@@ -61,7 +70,7 @@ class MainActivity : AppCompatActivity(){
         */
 
     }
-
+    //바텀 네비게이션 바로 프래그먼트 이동
     private fun setupBottomNavigationonView() {
         binding.bottomNav.setOnItemSelectedListener {  item ->
             when(item.itemId) {
@@ -78,9 +87,9 @@ class MainActivity : AppCompatActivity(){
                     true
                 }
                 R.id.action_post -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_content, PostFragment())
-                        .commit()
+                    if(ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                        startActivity(Intent(this, PostActivity::class.java))
+                    }
                     true
                 }
                 R.id.action_profile -> {
@@ -119,6 +128,23 @@ class MainActivity : AppCompatActivity(){
     }
      */
 
+    val MY_PERMISSION_ACCESS_ALL = 100
+
+    override fun onRequestPermissionsResult(//권한요청
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode === MY_PERMISSION_ACCESS_ALL) {
+            if (grantResults.size > 0) {
+                for (grant in grantResults) {
+                    if (grant != PackageManager.PERMISSION_GRANTED) System.exit(0)
+                }
+            }
+        }
+    }
 
 
     var lastTimeBackPressed : Long = 0
