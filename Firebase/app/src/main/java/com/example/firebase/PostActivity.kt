@@ -96,7 +96,7 @@ class PostActivity : AppCompatActivity() {
         val contentMap = hashMapOf(//포스팅 해시맵
             "imageUrl" to uri.toString(),
             "uid" to Firebase.auth?.currentUser?.uid,
-            "userID" to Firebase.auth.currentUser?.email,
+            "email" to Firebase.auth.currentUser?.email,
             "explain" to binding.postEditText.text.toString(),
             "timestamp" to System.currentTimeMillis().toLong(),
             "imageStorage" to fileName
