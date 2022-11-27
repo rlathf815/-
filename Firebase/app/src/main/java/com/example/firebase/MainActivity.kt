@@ -16,6 +16,7 @@ import com.example.firebase.navigation.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -93,6 +94,12 @@ class MainActivity : AppCompatActivity(){
                     true
                 }
                 R.id.action_profile -> {
+                    val profileFragment =ProfileFragment()
+                    val uid = FirebaseAuth.getInstance().currentUser!!.uid
+                    val bundle = Bundle()
+                    bundle.putString("destinationUID", uid)
+                    profileFragment.arguments = bundle
+
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_content, ProfileFragment())
                         .commit()

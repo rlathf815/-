@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'kotlin-android-extensions'
 }
 
 android {
@@ -47,6 +48,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-config-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'//파이어스토어 콜렉션
+    implementation 'com.github.bumptech.glide:glide:4.0.0'//이미지 로더
 
 
     implementation platform('com.google.firebase:firebase-bom:31.0.2')
