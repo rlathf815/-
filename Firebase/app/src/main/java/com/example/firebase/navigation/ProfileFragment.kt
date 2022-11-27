@@ -103,7 +103,7 @@ class ProfileFragment: Fragment() {
         override fun onBindViewHolder(p0: RecyclerView.ViewHolder, p1: Int) {
             var imageview = (p0 as CustomViewHolder).imageview
             Intent.ACTION_OPEN_DOCUMENT
-
+            System.out.println("======================================"+contentDTOs[p1].imageUrl )
             Glide.with(p0.itemView.context)
                 .load(contentDTOs[p1].imageUrl)
                 .apply(RequestOptions().centerCrop())
@@ -115,6 +115,7 @@ class ProfileFragment: Fragment() {
 
             return contentDTOs.size
         }
+
 
     }
 }

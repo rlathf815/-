@@ -48,8 +48,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-config-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'//파이어스토어 콜렉션
-    implementation 'com.github.bumptech.glide:glide:4.0.0'//이미지 로더
-
+    implementation 'com.github.bumptech.glide:glide:4.9.0'//이미지 로더
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
     implementation platform('com.google.firebase:firebase-bom:31.0.2')
 
