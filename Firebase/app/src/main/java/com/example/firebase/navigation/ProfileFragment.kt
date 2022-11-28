@@ -1,38 +1,29 @@
 package com.example.firebase.navigation
 
-import android.app.DownloadManager.Request
 import android.os.Bundle
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
-import android.support.v4.*
-import androidx.recyclerview.widget.*
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.View
-import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.LinearLayout
-import androidx.appcompat.widget.*
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.firebase.R
-import com.example.firebase.MainActivity
-import com.example.firebase.databinding.ActivityMainBinding
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.example.firebase.databinding.FragmentProfileBinding
 import com.example.firebase.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_profile.*
-import android.content.Intent.ACTION_OPEN_DOCUMENT
-import android.support.v4.*
+import android.graphics.PorterDuff
+import androidx.core.content.ContextCompat
+import com.example.firebase.navigation.model.FollowDTO
+import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.fragment_profile.view.*
 
 
 class ProfileFragment: Fragment() {
@@ -62,7 +53,82 @@ class ProfileFragment: Fragment() {
         }
         // account_recyclerview?.adapter=UserFragmentRecyclerViewAdapter()
         // account_recyclerview?.layoutManager = GridLayoutManager(requireActivity(),3)
+
+        fragmentView?.account_btn_follow_signout?.setOnClickListener {
+            requestFollow()
+        }
+        //getFollowerAndFollowing()
         return fragmentView
+    }
+    fun getFollowerAndFollowing(){
+        firestore?.collection("users")?.document(uid!!)?.addSnapshotListener{ documentSnapshot, firebaseFirestoreException ->
+            if(documentSnapshot == null) return@addSnapshotListener
+            var followDTO = documentSnapshot.toObject(FollowDTO::class.java)
+            if(followDTO?.followingCount != null){
+                fragmentView?.account_tv_following_count?.text = followDTO?.followingCount?.toString()
+            }
+            if(followDTO?.followerCount != null){
+                fragmentView?.account_tv_follower_count?.text = followDTO?.followerCount?.toString()
+                if(followDTO?.followers?.containsKey(currentUserUid!!)){
+                    fragmentView?.account_btn_follow_signout?.text = getString(R.string.follow_cancel)
+                    fragmentView?.account_btn_follow_signout?.background?.setColorFilter(ContextCompat.getColor(requireActivity(), R.color.lightGray), PorterDuff.Mode.MULTIPLY)
+                }else{
+                    fragmentView?.account_btn_follow_signout?.text = getString(R.string.follow)
+                    if(uid != currentUserUid){
+                        fragmentView?.account_btn_follow_signout?.background?.colorFilter = null
+                    }
+                }
+            }
+        }
+    }
+    fun requestFollow() {
+        // 내 계정에 데이터 저장
+        var tsDocFollowing = firestore?.collection("users")?.document(currentUserUid!!)
+        firestore?.runTransaction { transaction ->
+            var followDTO = transaction.get(tsDocFollowing!!).toObject(FollowDTO::class.java)
+            if (followDTO == null) {
+                followDTO = FollowDTO()
+                followDTO!!.followingCount = 1
+                followDTO!!.followers[uid!!] = true
+
+                transaction.set(tsDocFollowing, followDTO)
+                return@runTransaction
+            }
+
+            if (followDTO.followings.containsKey(uid)) {
+                // 내가 팔로우 한 상태일 때(언팔로우 버튼이 떠 있어야 함)
+                followDTO?.followingCount = followDTO.followingCount - 1
+                followDTO?.followers?.remove(uid)
+            } else { // 내가 팔로우 하지 않은 상태(팔로우 버튼이 떠 있어야 함)
+                followDTO?.followingCount = followDTO.followingCount + 1
+                followDTO?.followers[uid!!] = true
+            }
+            transaction.set(tsDocFollowing, followDTO)
+            return@runTransaction
+        }
+        // 상대방 계정에 데이터 저장
+        var tsDocFollower = firestore?.collection("users")?.document(uid!!)
+        firestore?.runTransaction { transaction ->
+            var followDTO = transaction.get(tsDocFollower!!).toObject(FollowDTO::class.java)
+            if (followDTO == null) {
+                followDTO = FollowDTO()
+                followDTO!!.followerCount = 1
+                followDTO!!.followers[currentUserUid!!] = true
+
+                transaction.set(tsDocFollower, followDTO!!)
+                return@runTransaction
+            }
+            // 내가 상대방 계정에 팔로우를 했을 경우
+            if (followDTO!!.followers.containsKey(currentUserUid)) {
+                followDTO!!.followerCount = followDTO!!.followerCount - 1
+                followDTO!!.followers.remove(currentUserUid)
+            } else { // 상대방 계정을 팔로우 하지 않았을 경우
+                followDTO!!.followerCount = followDTO!!.followerCount + 1
+                followDTO!!.followers[currentUserUid!!] = true
+            }
+            transaction.set(tsDocFollower, followDTO!!)
+            return@runTransaction
+        }
     }
     inner class UserFragmentRecyclerViewAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
@@ -90,7 +156,7 @@ class ProfileFragment: Fragment() {
             }
         }
         override fun onCreateViewHolder(p0: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            var width = resources.displayMetrics.widthPixels/3
+            var width = resources.displayMetrics.widthPixels / 3
             var imageview = ImageView(p0.context)
             imageview.layoutParams = LinearLayoutCompat.LayoutParams(width,width)
             return CustomViewHolder(imageview)
@@ -115,7 +181,5 @@ class ProfileFragment: Fragment() {
 
             return contentDTOs.size
         }
-
-
     }
 }
