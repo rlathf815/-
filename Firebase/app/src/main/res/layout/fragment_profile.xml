@@ -19,7 +19,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:contentDescription="@string/profile"
-            tools:src="@drawable/ic_profileimage"
+            android:src="@drawable/ic_profileimage"
             android:layout_alignParentLeft="true" />
         <Button
             android:id="@+id/account_btn_follow_signout"
@@ -98,8 +98,12 @@
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/account_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <TextView
+        android:id="@+id/post"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_posts"
+        android:layout_marginStart="20dp"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 </LinearLayout>

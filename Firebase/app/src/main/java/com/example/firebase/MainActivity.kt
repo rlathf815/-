@@ -99,9 +99,10 @@ class MainActivity : AppCompatActivity(){
                     val bundle = Bundle()
                     bundle.putString("destinationUID", uid)
                     profileFragment.arguments = bundle
+                    System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ uid(Main)= " + uid)
 
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_content, ProfileFragment())
+                        .replace(R.id.main_content, profileFragment)
                         .commit()
                     true
                 }
