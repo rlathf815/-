@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity(){
                     val profileFragment =ProfileFragment()
                     val uid = FirebaseAuth.getInstance().currentUser!!.uid
                     val bundle = Bundle()
-                    bundle.putString("destinationUID", uid)
+                    bundle.putString("destinationuid", uid)
                     profileFragment.arguments = bundle
                     System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ uid(Main)= " + uid)
 
@@ -107,6 +107,7 @@ class MainActivity : AppCompatActivity(){
                     true
                 }
                 R.id.action_menu -> {
+
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_content, MenuFragment())
                         .commit()
@@ -117,7 +118,16 @@ class MainActivity : AppCompatActivity(){
 
         }
     }
+    fun openProfileFragment(bd : String){
+        System.out.println("==================== Main_ openprofileFrag evoked")
 
+        val profileFragment =ProfileFragment()
+        val bundle = Bundle()
+        bundle.putString("destinationEmail", bd)
+        profileFragment.arguments = bundle
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.main_content,profileFragment)
+    }
     /* 콜렉션 도큐멘터리 관련 메모
     val db: FirebaseFirestore = Firebase.firestore //콜렉션
     val usersCollectionRef = db.collection("users") // users 콜렉션

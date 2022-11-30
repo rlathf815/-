@@ -32,6 +32,7 @@ class ProfileFragment: Fragment() {
     var uid: String? = null
     var auth : FirebaseAuth ?=null
     var currentUserUid: String? = null
+    var targetEmail: String?=null
     private var binding: FragmentProfileBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -42,7 +43,8 @@ class ProfileFragment: Fragment() {
         auth = FirebaseAuth.getInstance()
         fragmentView = binding!!.root
         currentUserUid = auth?.currentUser?.uid
-        uid = arguments?.getString("destinationUid")
+
+        targetEmail = arguments?.getString("destinationEmail")
         firestore = FirebaseFirestore.getInstance()
 
         //var contentDTOs: ArrayList<ContentDTO> = arrayListOf()
@@ -60,7 +62,7 @@ class ProfileFragment: Fragment() {
         var contentDTOs : ArrayList<ContentDTO> = arrayListOf()
 
 //System.out.println("========================================querysnapshot size" + firestore?.collection("post"))
-            firestore?.collection ("post")?.whereEqualTo("uid", currentUserUid)?.addSnapshotListener{querySnapshot, firebaseFirestoreException ->
+            firestore?.collection ("post")?.whereEqualTo("userID", email)?.addSnapshotListener{querySnapshot, firebaseFirestoreException ->
                 contentDTOs.clear()
                 System.out.println("========================================uid" + uid)
                 if (querySnapshot == null) return@addSnapshotListener
@@ -79,7 +81,7 @@ class ProfileFragment: Fragment() {
                 for(i in 0..size-1)
                 {
 
-                    postContent.append(contentDTOs!![i].explain).append("\n")
+                    postContent.append(uid).append("  ").append(contentDTOs!![i].explain).append("\n")
 
                 }
                 post.text = postContent.toString()
